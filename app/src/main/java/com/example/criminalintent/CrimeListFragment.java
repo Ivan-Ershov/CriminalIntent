@@ -62,7 +62,7 @@ public class CrimeListFragment extends Fragment {
         private final TextView mTitleTextView;
         private final TextView mDateTextView;
         private final ImageView mSolvedImageView;
-        private Crime mCrime;
+        protected Crime mCrime;
 
         public CrimeHolder(@NonNull View itemView) {
             super(itemView);
@@ -96,7 +96,6 @@ public class CrimeListFragment extends Fragment {
         private final TextView mDateTextView;
         private final Button mCalledPoliceButton;
         private final ImageView mSolvedImageView;
-        private Crime mCrime;
 
         public CrimeHolderWithPolice(@NonNull View itemView) {
             super(itemView);
@@ -112,8 +111,9 @@ public class CrimeListFragment extends Fragment {
 
         }
 
+        @Override
         public void bind (Crime crime) {
-            mCrime = crime;
+            super.mCrime = crime;
 
             mTitleTextView.setText(crime.getTitle());
             mDateTextView.setText(dateFormat.format(crime.getDate()));
@@ -121,10 +121,10 @@ public class CrimeListFragment extends Fragment {
 
         }
 
-        public void onClick (View v) {
-            Toast.makeText(getActivity(), mCrime.getTitle() + " clicked!", Toast.LENGTH_LONG).show();
+        @Override
+        public void onClick(View v) {
+            super.onClick(v);
         }
-
     }
 
     private class CrimeAdapter extends RecyclerView.Adapter<CrimeHolder> {
