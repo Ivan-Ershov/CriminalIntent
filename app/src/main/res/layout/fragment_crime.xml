@@ -32,11 +32,27 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-    <CheckBox
-        android:id="@+id/crime_solved"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/crime_solved_label"/>
+        android:orientation="horizontal">
+
+        <CheckBox
+            android:id="@+id/crime_solved"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/crime_solved_label"
+            android:padding="8dp"/>
+
+        <CheckBox
+            android:id="@+id/crime_requires_police"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/crime_requires_police_label"
+            android:padding="8dp"
+            android:layout_marginStart="16dp"/>
+
+    </LinearLayout>
 
 
 </LinearLayout>

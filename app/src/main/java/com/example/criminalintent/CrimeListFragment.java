@@ -1,6 +1,7 @@
 package com.example.criminalintent;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,13 +48,27 @@ public class CrimeListFragment extends Fragment {
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        updateUI();
+
+    }
+
     private void updateUI () {
 
-        CrimeLab crimeLab = CrimeLab.getCrimeLab(getActivity());
-        List<Crime> crimes = crimeLab.getCrimes();
+        if (mAdapter == null) {
 
-        mAdapter = new CrimeAdapter(crimes);
-        mCrimeRecyclerView.setAdapter(mAdapter);
+            CrimeLab crimeLab = CrimeLab.getCrimeLab(getActivity());
+            List<Crime> crimes = crimeLab.getCrimes();
+
+            mAdapter = new CrimeAdapter(crimes);
+            mCrimeRecyclerView.setAdapter(mAdapter);
+
+        } else {
+            mAdapter.notifyDataSetChanged();
+        }
 
     }
 
@@ -85,7 +100,7 @@ public class CrimeListFragment extends Fragment {
         }
 
         public void onClick (View v) {
-            Toast.makeText(getActivity(), mCrime.getTitle() + " clicked!", Toast.LENGTH_LONG).show();
+            startActivity(CrimeActivity.newIntent(getActivity(), mCrime.getId()));
         }
 
     }
@@ -121,10 +136,6 @@ public class CrimeListFragment extends Fragment {
 
         }
 
-        @Override
-        public void onClick(View v) {
-            super.onClick(v);
-        }
     }
 
     private class CrimeAdapter extends RecyclerView.Adapter<CrimeHolder> {

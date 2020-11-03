@@ -1,6 +1,9 @@
 package com.example.criminalintent;
 
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -15,18 +18,39 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import java.text.SimpleDateFormat;
+import java.util.UUID;
+
 public class CrimeFragment extends Fragment {
+    @SuppressLint("SimpleDateFormat") private static final SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMM d, yyyy");
+
+    private static final String ARGS_CRIME_ID = "crime_id";
 
     private Crime mCrime;
     private EditText mTitleField;
     private Button mDateButton;
     private CheckBox mSolvedCheckBox;
+    private CheckBox mRequiresPoliceCheckBox;
+
+    public static CrimeFragment newInstance (UUID crimeId) {
+
+        Bundle args = new Bundle();
+
+        args.putSerializable(ARGS_CRIME_ID, crimeId);
+
+        CrimeFragment fragment = new CrimeFragment();
+
+        fragment.setArguments(args);
+
+        return fragment;
+
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mCrime = new Crime();
+        mCrime = CrimeLab.getCrimeLab(getActivity()).getCrime((UUID) getArguments().getSerializable(ARGS_CRIME_ID));
 
     }
 
@@ -39,6 +63,9 @@ public class CrimeFragment extends Fragment {
         mTitleField = v.findViewById(R.id.crime_title);
         mDateButton = v.findViewById(R.id.crime_date);
         mSolvedCheckBox = v.findViewById(R.id.crime_solved);
+        mRequiresPoliceCheckBox = v.findViewById(R.id.crime_requires_police);
+
+        mTitleField.setText(mCrime.getTitle());
 
         mTitleField.addTextChangedListener(new TextWatcher() {
             @Override
@@ -57,10 +84,14 @@ public class CrimeFragment extends Fragment {
             }
         });
 
-        mDateButton.setText(mCrime.getDate().toString());
+        mDateButton.setText(dateFormat.format(mCrime.getDate()));
         mDateButton.setEnabled(false);
 
+        mSolvedCheckBox.setChecked(mCrime.isSolved());
         mSolvedCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> mCrime.setSolved(isChecked));
+
+        mRequiresPoliceCheckBox.setChecked(mCrime.isRequiresPolice());
+        mRequiresPoliceCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> mCrime.setRequiresPolice(isChecked));
 
         return v;
 

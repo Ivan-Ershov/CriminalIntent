@@ -2,19 +2,27 @@ package com.example.criminalintent;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.UUID;
 
 public class CrimeLab {
 
     private static CrimeLab sCrimeLab;
 
-    private final List<Crime> mCrimes;
+    private final HashMap<UUID, Crime> mCrimes;
 
     private CrimeLab (Context context) {
 
-        mCrimes = new ArrayList<>();
+        mCrimes = new LinkedHashMap<>();
 
         for (int i = 0; i < 100; i++) {
 
@@ -41,25 +49,15 @@ public class CrimeLab {
     }
 
     public void addCrime (Crime crime) {
-        mCrimes.add(crime);
+        mCrimes.put(crime.getId(), crime);
     }
 
     public List<Crime> getCrimes() {
-        return mCrimes;
+        return new ArrayList<>(mCrimes.values());
     }
 
     public Crime getCrime (UUID id) {
-
-        for (Crime crime : mCrimes) {
-
-            if (crime.getId().equals(id)) {
-                return crime;
-            }
-
-        }
-
-        return null;
-
+        return mCrimes.get(id);
     }
 
 }
