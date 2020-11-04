@@ -1,6 +1,7 @@
 package com.example.criminalintent;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -21,8 +22,8 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class CrimeListFragment extends Fragment {
-    @SuppressLint("SimpleDateFormat")
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMM d, yyyy");
+    @SuppressLint("SimpleDateFormat") private static final SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMM d, yyyy");
+    private static final int REQUEST_CODE_CRIME_ACTIVITY = 0;
 
     private RecyclerView mCrimeRecyclerView;
     private CrimeAdapter mAdapter;
@@ -49,10 +50,11 @@ public class CrimeListFragment extends Fragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
 
-        updateUI();
+        if ((requestCode == REQUEST_CODE_CRIME_ACTIVITY) && (resultCode == Activity.RESULT_OK) && (data != null)) {
+            updateOneView(CrimeActivity.getIntExtraAdapterPosition(data));
+        }
 
     }
 
@@ -68,6 +70,22 @@ public class CrimeListFragment extends Fragment {
 
         } else {
             mAdapter.notifyDataSetChanged();
+        }
+
+    }
+
+    private void updateOneView (int adapterPosition) {
+
+        if (mAdapter == null) {
+
+            CrimeLab crimeLab = CrimeLab.getCrimeLab(getActivity());
+            List<Crime> crimes = crimeLab.getCrimes();
+
+            mAdapter = new CrimeAdapter(crimes);
+            mCrimeRecyclerView.setAdapter(mAdapter);
+
+        } else {
+            mAdapter.notifyItemChanged(adapterPosition);
         }
 
     }
@@ -100,7 +118,7 @@ public class CrimeListFragment extends Fragment {
         }
 
         public void onClick (View v) {
-            startActivity(CrimeActivity.newIntent(getActivity(), mCrime.getId()));
+            startActivityForResult(CrimeActivity.newIntent(getActivity(), mCrime.getId(), getAdapterPosition()), REQUEST_CODE_CRIME_ACTIVITY);
         }
 
     }

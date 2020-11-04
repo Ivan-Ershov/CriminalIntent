@@ -2,7 +2,7 @@ package com.example.criminalintent;
 
 
 import android.annotation.SuppressLint;
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -19,12 +19,14 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import java.text.SimpleDateFormat;
+import java.util.Objects;
 import java.util.UUID;
 
 public class CrimeFragment extends Fragment {
     @SuppressLint("SimpleDateFormat") private static final SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMM d, yyyy");
 
     private static final String ARGS_CRIME_ID = "crime_id";
+    private static final String ARGS_ADAPTER_POSITION = "adapter_position";
 
     private Crime mCrime;
     private EditText mTitleField;
@@ -32,11 +34,13 @@ public class CrimeFragment extends Fragment {
     private CheckBox mSolvedCheckBox;
     private CheckBox mRequiresPoliceCheckBox;
 
-    public static CrimeFragment newInstance (UUID crimeId) {
+    public static CrimeFragment newInstance (UUID crimeId, int adapterPosition) {
 
         Bundle args = new Bundle();
 
         args.putSerializable(ARGS_CRIME_ID, crimeId);
+
+        args.putInt(ARGS_ADAPTER_POSITION, adapterPosition);
 
         CrimeFragment fragment = new CrimeFragment();
 
@@ -50,7 +54,10 @@ public class CrimeFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        assert getArguments() != null;
         mCrime = CrimeLab.getCrimeLab(getActivity()).getCrime((UUID) getArguments().getSerializable(ARGS_CRIME_ID));
+
+        returnResult();
 
     }
 
@@ -96,4 +103,16 @@ public class CrimeFragment extends Fragment {
         return v;
 
     }
+
+    private void returnResult () {
+
+        Intent data = new Intent();
+
+        assert getArguments() != null;
+        CrimeActivity.putExtraAdapterPosition(data, getArguments().getInt(ARGS_ADAPTER_POSITION));
+
+        Objects.requireNonNull(getActivity()).setResult(Activity.RESULT_OK, data);
+
+    }
+
 }
