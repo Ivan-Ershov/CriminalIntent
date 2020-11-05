@@ -6,4 +6,6 @@
     <string name="crime_solved_label">Solved</string>
     <string name="called_police_button">Called police</string>
     <string name="crime_requires_police_label">Requires police</string>
+    <string name="first_crime_button">First crime</string>
+    <string name="last_crime_button">Last crime</string>
 </resources>

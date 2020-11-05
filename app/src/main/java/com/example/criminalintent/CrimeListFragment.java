@@ -1,8 +1,6 @@
 package com.example.criminalintent;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +21,6 @@ import java.util.List;
 
 public class CrimeListFragment extends Fragment {
     @SuppressLint("SimpleDateFormat") private static final SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMM d, yyyy");
-    private static final int REQUEST_CODE_CRIME_ACTIVITY = 0;
 
     private RecyclerView mCrimeRecyclerView;
     private CrimeAdapter mAdapter;
@@ -50,11 +47,10 @@ public class CrimeListFragment extends Fragment {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    public void onResume() {
+        super.onResume();
 
-        if ((requestCode == REQUEST_CODE_CRIME_ACTIVITY) && (resultCode == Activity.RESULT_OK) && (data != null)) {
-            updateOneView(CrimeActivity.getIntExtraAdapterPosition(data));
-        }
+        updateUI();
 
     }
 
@@ -70,22 +66,6 @@ public class CrimeListFragment extends Fragment {
 
         } else {
             mAdapter.notifyDataSetChanged();
-        }
-
-    }
-
-    private void updateOneView (int adapterPosition) {
-
-        if (mAdapter == null) {
-
-            CrimeLab crimeLab = CrimeLab.getCrimeLab(getActivity());
-            List<Crime> crimes = crimeLab.getCrimes();
-
-            mAdapter = new CrimeAdapter(crimes);
-            mCrimeRecyclerView.setAdapter(mAdapter);
-
-        } else {
-            mAdapter.notifyItemChanged(adapterPosition);
         }
 
     }
@@ -118,7 +98,7 @@ public class CrimeListFragment extends Fragment {
         }
 
         public void onClick (View v) {
-            startActivityForResult(CrimeActivity.newIntent(getActivity(), mCrime.getId(), getAdapterPosition()), REQUEST_CODE_CRIME_ACTIVITY);
+            startActivity(CrimePagerActivity.newIntent(getActivity(), mCrime.getId()));
         }
 
     }
