@@ -2,6 +2,7 @@ package com.example.criminalintent;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -68,9 +69,45 @@ public class CrimePagerActivity extends AppCompatActivity {
             if (mCrimes.get(i).getId().equals(crimeId)) {
 
                 mViewPager.setCurrentItem(i);
+
                 break;
 
             }
+
+        }
+
+        if (mViewPager.getCurrentItem() == 0) {
+            mFistCrimeButton.setVisibility(View.INVISIBLE);
+        } else {
+            mFistCrimeButton.setVisibility(View.VISIBLE);
+        }
+
+        if (mViewPager.getCurrentItem() == (mCrimes.size() - 1)) {
+            mLastCrimeButton.setVisibility(View.INVISIBLE);
+        } else {
+            mLastCrimeButton.setVisibility(View.VISIBLE);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            mViewPager.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+
+                if (mViewPager.getCurrentItem() == 0) {
+                    mFistCrimeButton.setVisibility(View.INVISIBLE);
+                } else {
+                    mFistCrimeButton.setVisibility(View.VISIBLE);
+                }
+
+                if (mViewPager.getCurrentItem() == (mCrimes.size() - 1)) {
+                    mLastCrimeButton.setVisibility(View.INVISIBLE);
+                } else {
+                    mLastCrimeButton.setVisibility(View.VISIBLE);
+                }
+
+            });
+        } else {
+
+            mFistCrimeButton.setVisibility(View.VISIBLE);
+            mLastCrimeButton.setVisibility(View.VISIBLE);
 
         }
 

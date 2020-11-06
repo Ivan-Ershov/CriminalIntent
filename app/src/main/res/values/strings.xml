@@ -8,4 +8,5 @@
     <string name="crime_requires_police_label">Requires police</string>
     <string name="first_crime_button">First crime</string>
     <string name="last_crime_button">Last crime</string>
+    <string name="date_picker_title">Date of crime</string>
 </resources>

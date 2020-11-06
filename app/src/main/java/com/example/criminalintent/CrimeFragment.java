@@ -2,6 +2,8 @@ package com.example.criminalintent;
 
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -15,14 +17,18 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
 public class CrimeFragment extends Fragment {
     @SuppressLint("SimpleDateFormat") private static final SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMM d, yyyy");
 
     private static final String ARGS_CRIME_ID = "crime_id";
+    private static final String DIALOG_DATE = "DialogDate";
+    private static final int REQUEST_DATE_PICKER_FRAGMENT = 0;
 
     private Crime mCrime;
     private EditText mTitleField;
@@ -84,7 +90,16 @@ public class CrimeFragment extends Fragment {
         });
 
         mDateButton.setText(dateFormat.format(mCrime.getDate()));
-        mDateButton.setEnabled(false);
+        mDateButton.setOnClickListener(v1 -> {
+
+            FragmentManager fragmentManager = getFragmentManager();
+            DatePickerFragment dialog = DatePickerFragment.newInstate(mCrime.getDate());
+
+            dialog.setTargetFragment(CrimeFragment.this, REQUEST_DATE_PICKER_FRAGMENT);
+
+            dialog.show(fragmentManager, DIALOG_DATE);
+
+        });
 
         mSolvedCheckBox.setChecked(mCrime.isSolved());
         mSolvedCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> mCrime.setSolved(isChecked));
@@ -96,4 +111,20 @@ public class CrimeFragment extends Fragment {
 
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+
+        if ((resultCode == Activity.RESULT_OK) && (requestCode == REQUEST_DATE_PICKER_FRAGMENT)) {
+
+            mCrime.setDate((Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE));
+
+            updateDate();
+
+        }
+
+    }
+
+    private void updateDate() {
+        mDateButton.setText(dateFormat.format(mCrime.getDate()));
+    }
 }
