@@ -2,7 +2,6 @@ package com.example.criminalintent;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,11 +12,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Objects;
 
 public class DatePickerFragment extends DialogFragment {
     public static final String EXTRA_DATE = "com.example.criminalintent.date";
@@ -40,6 +39,7 @@ public class DatePickerFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
 
+        assert getArguments() != null;
         Date date = (Date) getArguments().getSerializable(ARGS_DATE);
 
         Calendar calendar = Calendar.getInstance();
@@ -50,14 +50,14 @@ public class DatePickerFragment extends DialogFragment {
         mDatePicker = v.findViewById(R.id.dialog_date_picker);
         mDatePicker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), null);
 
-        return new AlertDialog.Builder(getActivity())
+        return new AlertDialog.Builder(Objects.requireNonNull(getActivity()))
                 .setView(v)
                 .setTitle(R.string.date_picker_title)
-                .setPositiveButton(android.R.string.ok, (dialog, which) -> sentResult(Activity.RESULT_OK, (new GregorianCalendar(mDatePicker.getYear(), mDatePicker.getMonth(), mDatePicker.getDayOfMonth())).getTime()))
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> sentResult((new GregorianCalendar(mDatePicker.getYear(), mDatePicker.getMonth(), mDatePicker.getDayOfMonth())).getTime()))
                 .create();
     }
 
-    private void sentResult (int resultCode, Date date) {
+    private void sentResult(Date date) {
 
         if (getTargetFragment() == null) {
             return;
@@ -67,7 +67,7 @@ public class DatePickerFragment extends DialogFragment {
 
         intent.putExtra(EXTRA_DATE, date);
 
-        getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, intent);
+        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
 
     }
 
