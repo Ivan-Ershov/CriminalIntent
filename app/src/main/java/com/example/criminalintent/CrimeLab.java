@@ -92,6 +92,7 @@ public class CrimeLab {
         values.put(Columns.DATE, crime.getDate().getTime());
         values.put(Columns.SOLVED, crime.isSolved() ? 1 : 0);
         values.put(Columns.REQUIRES_POLICE, crime.isRequiresPolice() ? 1 : 0);
+        values.put(Columns.SUSPECT, crime.getSuspect());
 
         return values;
     }

@@ -23,6 +23,7 @@ public class CrimeCursorWrapper extends CursorWrapper {
         crime.setDate(new Date(getLong(getColumnIndex(Columns.DATE))));
         crime.setSolved(getInt(getColumnIndex(Columns.SOLVED)) == 1);
         crime.setRequiresPolice(getInt(getColumnIndex(Columns.REQUIRES_POLICE)) == 1);
+        crime.setSuspect(getString(getColumnIndex(Columns.SUSPECT)));
 
         return crime;
     }
