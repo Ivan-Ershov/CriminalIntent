@@ -9,7 +9,8 @@
 * [Установка](#установка)
 
 ### О приложении
-CriminalIntent -
+CriminalIntent - это приложение для учёта офисных пиступлений.
+В приложении можно: создать приступление, выбрать подозреваемого, написать или позвонить подозреваемому, добавить фото приступления.
 
 ### Установка
 
@@ -27,7 +28,8 @@ CriminalIntent -
 * [Install](#install)
 
 ### About
-CriminalIntent
+CriminalIntent - application for registration of office crimes.
+In the application you can: add crime, choose suspect, write or call suspect, add crime photo.
 
 ### Install
 
