@@ -3,6 +3,7 @@ package com.example.criminalintent;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.Point;
 
 public class PictureUtils {
@@ -29,7 +30,14 @@ public class PictureUtils {
         options = new BitmapFactory.Options();
         options.inSampleSize = inSampleSize;
 
-        return BitmapFactory.decodeFile(path, options);
+        Bitmap bitmap = BitmapFactory.decodeFile(path, options);
+
+        Matrix matrixRotate = new Matrix();
+        matrixRotate.postRotate(90);
+
+        bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrixRotate, true);
+
+        return bitmap;
     }
 
     public static Bitmap getScaleBitmap (String path, Activity activity) {

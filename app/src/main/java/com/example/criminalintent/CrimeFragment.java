@@ -51,8 +51,10 @@ public class CrimeFragment extends Fragment {
     private static final String ARGS_CRIME_ID = "crime_id";
     private static final String DIALOG_DATE = "DialogDate";
     private static final String DIALOG_TIME = "DialogTime";
+    private static final String DIALOG_BIG_PHOTO = "DialogBigPhoto";
     private static final int REQUEST_DATE_PICKER_FRAGMENT = 0;
     private static final int REQUEST_TIME_PICKER_FRAGMENT = 1;
+    private static final int REQUEST_BIG_PHOTO_FRAGMENT = 2;
     private static final int REQUEST_CONTACT_INTENT = 2;
     private static final int REQUEST_PHOTO = 3;
     private static final int PERMISSION_REQUEST_READ_CONTACTS = 0;
@@ -214,6 +216,13 @@ public class CrimeFragment extends Fragment {
         });
 
         mPhotoView.getViewTreeObserver().addOnGlobalLayoutListener(this::updatePhotoView);
+        mPhotoView.setOnClickListener(v17 -> {
+            BigPhotoFragment dialog = BigPhotoFragment.newInstate(mPhotoFile);
+            dialog.setTargetFragment(CrimeFragment.this, REQUEST_BIG_PHOTO_FRAGMENT);
+
+            assert getFragmentManager() != null;
+            dialog.show(getFragmentManager(), DIALOG_BIG_PHOTO);
+        });
 
         return v;
 
