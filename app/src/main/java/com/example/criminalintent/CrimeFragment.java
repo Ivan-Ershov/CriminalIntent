@@ -73,6 +73,12 @@ public class CrimeFragment extends Fragment {
     private ImageButton mPhotoButton;
     private ImageView mPhotoView;
 
+    private Callbacks mCallbacks;
+
+    public interface Callbacks {
+        void onCrimeUpdated (Crime crime);
+    }
+
     public static CrimeFragment newInstance (UUID crimeId) {
 
         Bundle args = new Bundle();
@@ -84,6 +90,14 @@ public class CrimeFragment extends Fragment {
         fragment.setArguments(args);
 
         return fragment;
+
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        mCallbacks = (Callbacks) context;
 
     }
 
@@ -129,7 +143,11 @@ public class CrimeFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+
                 mCrime.setTitle(s.toString());
+
+                updateCrime();
+
             }
 
             @Override
@@ -161,10 +179,22 @@ public class CrimeFragment extends Fragment {
         });
 
         mSolvedCheckBox.setChecked(mCrime.isSolved());
-        mSolvedCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> mCrime.setSolved(isChecked));
+        mSolvedCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+
+            mCrime.setSolved(isChecked);
+
+            updateCrime();
+
+        });
 
         mRequiresPoliceCheckBox.setChecked(mCrime.isRequiresPolice());
-        mRequiresPoliceCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> mCrime.setRequiresPolice(isChecked));
+        mRequiresPoliceCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+
+            mCrime.setRequiresPolice(isChecked);
+
+            updateCrime();
+
+        });
 
         mReportButton.setOnClickListener(v13 -> ShareCompat.IntentBuilder.from(Objects.requireNonNull(getActivity()))
                 .setType("text/plain")
@@ -217,11 +247,13 @@ public class CrimeFragment extends Fragment {
 
         mPhotoView.getViewTreeObserver().addOnGlobalLayoutListener(this::updatePhotoView);
         mPhotoView.setOnClickListener(v17 -> {
+
             BigPhotoFragment dialog = BigPhotoFragment.newInstate(mPhotoFile);
             dialog.setTargetFragment(CrimeFragment.this, REQUEST_BIG_PHOTO_FRAGMENT);
 
             assert getFragmentManager() != null;
             dialog.show(getFragmentManager(), DIALOG_BIG_PHOTO);
+
         });
 
         return v;
@@ -251,6 +283,7 @@ public class CrimeFragment extends Fragment {
                 mCrime.setDate((Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE));
 
                 updateDate();
+                updateCrime();
 
             }
 
@@ -259,6 +292,7 @@ public class CrimeFragment extends Fragment {
                 mCrime.setDate((Date) data.getSerializableExtra(TimePickerFragment.EXTRA_DATE));
 
                 updateTime();
+                updateCrime();
 
             }
 
@@ -280,6 +314,8 @@ public class CrimeFragment extends Fragment {
                         mSuspectButton.setText(suspect);
                         mCallSuspectButton.setEnabled(true);
 
+                        updateCrime();
+
                     }
                 }
 
@@ -292,6 +328,7 @@ public class CrimeFragment extends Fragment {
                 getActivity().revokeUriPermission(uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
                 updatePhotoView();
+                updateCrime();
 
             }
 
@@ -327,6 +364,19 @@ public class CrimeFragment extends Fragment {
 
         CrimeLab.getCrimeLab(getActivity()).updateCrime(mCrime);
 
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+
+        mCallbacks = null;
+
+    }
+
+    private void updateCrime () {
+        CrimeLab.getCrimeLab(getActivity()).updateCrime(mCrime);
+        mCallbacks.onCrimeUpdated(mCrime);
     }
 
     private void updateDate () {
