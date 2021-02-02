@@ -19,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -175,6 +176,9 @@ public class CrimeListFragment extends Fragment {
 
             mAdapter = new CrimeAdapter(crimeLab.getCrimes());
             mCrimeRecyclerView.setAdapter(mAdapter);
+            ItemTouchHelper.Callback callback = new CrimeItemTouchHelperCallback(mAdapter);
+            ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+            touchHelper.attachToRecyclerView(mCrimeRecyclerView);
 
         } else {
             mAdapter.wrapNotifyDataSetChanged(CrimeLab.getCrimeLab(getActivity()).getCrimes());
@@ -270,7 +274,39 @@ public class CrimeListFragment extends Fragment {
 
     }
 
-    private class CrimeAdapter extends RecyclerView.Adapter<CrimeHolder> {
+    private interface CrimeItemTouchHelperAdapter {
+
+        void onItemDismiss (int position);
+
+    }
+
+    private class CrimeItemTouchHelperCallback extends ItemTouchHelper.Callback {
+
+        private final CrimeItemTouchHelperAdapter mAdapter;
+
+        public CrimeItemTouchHelperCallback (CrimeItemTouchHelperAdapter adapter) {
+            mAdapter = adapter;
+        }
+
+        @Override
+        public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+            int swipeFlags = ItemTouchHelper.START | ItemTouchHelper.END;
+            return makeMovementFlags(0, swipeFlags);
+        }
+
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            return false;
+        }
+
+        @Override
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
+        }
+
+    }
+
+    private class CrimeAdapter extends RecyclerView.Adapter<CrimeHolder> implements CrimeItemTouchHelperAdapter {
 
         private List<Crime> mCrimes;
 
@@ -310,6 +346,14 @@ public class CrimeListFragment extends Fragment {
         public int getItemViewType(int position) {
             return mCrimes.get(position).isRequiresPolice() ? 1 : 0;
         }
+
+        @Override
+        public void onItemDismiss(int position) {
+            CrimeLab.getCrimeLab(getActivity()).deleteCrime(mCrimes.get(position));
+            mCrimes.remove(position);
+            notifyItemRemoved(position);
+        }
+
     }
 
 }
